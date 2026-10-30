@@ -166,6 +166,48 @@ ul.ticks li::before{content:"";position:absolute;left:4px;top:.58em;width:9px;he
 footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 16px 50px;border-top:1px solid var(--line);margin-top:40px}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;border-radius:999px;padding:9px 18px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:50}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.pdf-btn{margin-top:20px;display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:600;font-size:15px;background:#fff;color:var(--teal);border:0;border-radius:999px;padding:11px 20px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.pdf-btn:hover{background:#fff7e6}
+.pdf-btn.alt{background:var(--teal);color:#fff;margin-top:0}
+.pdf-hint{font-size:12px;opacity:.7;margin-top:8px}
+.print-only{display:none}
+
+@page{size:A4;margin:12mm}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{scroll-behavior:auto}
+  body{background:#fff;font-size:10pt;line-height:1.4}
+  ul.ticks li{margin:5px 0}
+  .card h3{font-size:13pt;margin-bottom:6px}
+  .sec-head h2{font-size:17pt}
+  .sec-icon{width:30px;height:30px;font-size:15px}
+  .grid,.info-grid{gap:10px}
+  .card + .card{margin-top:10px}
+  .leader{padding:10px 16px;margin-top:10px}
+  .nav,.pdf-btn,.pdf-hint,.countdown,.toast,.btn,.copy,.hotel .actions,.clocks,.conv,.conv + .note,.progress{display:none !important}
+  .print-only{display:block}
+  .hero::after{display:none}
+  .hero-inner{padding:18px 20px 22px}
+  .logo-wrap{padding:10px 16px;box-shadow:none}
+  .logo{height:52px}
+  .eyebrow{margin-top:14px}
+  .hero h1{font-size:30pt}
+  .intro{margin-top:10px}
+  main{padding:0 4px}
+  section{padding-top:18px}
+  .sec-head{margin-bottom:10px;break-after:avoid}
+  .card,.callout,.leader,.timeline,.temp,.wh,.phone{break-inside:avoid}
+  .card{box-shadow:none;padding:14px 16px}
+  .grid.g2,.info-grid{grid-template-columns:1fr 1fr}
+  .grid.g3{grid-template-columns:repeat(3,1fr)}
+  .hotel img{aspect-ratio:16/11}
+  .sec-head + *{break-before:avoid}
+  .check{grid-template-columns:1fr 1fr}
+  .check label{padding:7px 10px}
+  footer{margin-top:20px;padding:14px 0;border-top:1px solid var(--line)}
+  a{color:inherit;text-decoration:none}
+}
 </style>
 </head>
 <body>
@@ -183,6 +225,8 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 16px 50p
     </div>
     <div class="countdown" id="countdown" hidden></div>
     <p class="intro">Please review your flight and hotel arrangements and keep this briefing with your travel documents. We look forward to travelling with you.</p>
+    <button class="pdf-btn" id="pdf-btn" type="button" data-pdf>⬇ Download PDF</button>
+    <div class="pdf-hint">On the print screen, choose <b>“Save as PDF”</b> as the printer.</div>
   </div>
 </header>
 
@@ -245,9 +289,9 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 16px 50p
   </div>
   <div class="leader">
     <div class="av">LL</div>
-    <div class="who"><div class="lbl">Group A tour leader</div><div class="nm">Lance Leong · +65 1234 5678</div></div>
-    <a class="btn" href="tel:+6512345678">📞 Call</a>
-    <button class="btn ghost" data-copy="+65 1234 5678">Copy number</button>
+    <div class="who"><div class="lbl">Group A tour leader</div><div class="nm">Lance Leong · +65 9121 8847</div></div>
+    <a class="btn" href="tel:+6591218847">📞 Call</a>
+    <button class="btn ghost" data-copy="+65 9121 8847">Copy number</button>
   </div>
 </section>
 
@@ -447,7 +491,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 16px 50p
     <div class="card">
       <div class="contact"><div class="ic">🧭</div><div style="flex:1">
         <h3>WTS Travel contact</h3>
-        <div class="phone"><div><div class="lab">Lance Leong · Tour leader</div><div class="num">+65 1234 5678</div></div><button class="copy" data-copy="+65 1234 5678">Copy</button></div>
+        <div class="phone"><div><div class="lab">Lance Leong · Tour leader</div><div class="num">+65 9121 8847</div></div><button class="copy" data-copy="+65 9121 8847">Copy</button></div>
       </div></div>
     </div>
     <div class="card">
@@ -463,7 +507,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 16px 50p
 
 </main>
 
-<footer>WTS Travel &amp; Tours Pte Ltd · Vietnam Tour Briefing · Group A · 23–28 November 2026<br>Information is subject to change. Your tour leader will advise any updates.</footer>
+<footer><button class="pdf-btn alt" type="button" data-pdf>⬇ Download PDF</button><br><br>WTS Travel &amp; Tours Pte Ltd · Vietnam Tour Briefing · Group A · 23–28 November 2026<br>Information is subject to change. Your tour leader will advise any updates.</footer>
 <div class="toast" id="toast">Copied</div>
 
 <script>
@@ -483,6 +527,15 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 16px 50p
     else cd.hidden=true;
   }
   renderCd(); setInterval(renderCd, 30000);
+
+  // PDF download (browser print → Save as PDF)
+  document.querySelectorAll('[data-pdf]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var old=document.title; document.title='Vietnam Tour Briefing - Group A - 23-28 Nov 2026';
+      try{ window.print(); }catch(e){ show('Please use your browser menu → Print → Save as PDF'); }
+      setTimeout(function(){document.title=old},1000);
+    });
+  });
 
   // Live clocks
   function pad(n){return (n<10?'0':'')+n}
