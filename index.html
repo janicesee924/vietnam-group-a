@@ -22,7 +22,7 @@ img{max-width:100%;display:block}
 
 /* Top nav */
 .nav{position:sticky;top:0;z-index:20;background:rgba(251,248,242,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.nav-inner{max-width:1040px;margin:0 auto;display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none}
+.nav-inner{position:relative;max-width:1040px;margin:0 auto;display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none}
 .nav-inner::-webkit-scrollbar{display:none}
 .nav a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-size:14px;font-weight:500;padding:7px 13px;border-radius:999px;white-space:nowrap;transition:.15s}
 .nav a:hover{background:var(--mint);color:var(--teal)}
@@ -58,7 +58,7 @@ img{max-width:100%;display:block}
 .gswitch button b{display:block;font-size:15px}
 .gswitch button span{display:block;font-size:12px;opacity:.85}
 .gswitch button.on{background:var(--saffron);color:#2a1d00;opacity:1;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-.navg{flex:0 0 auto;display:inline-flex;background:var(--mint);border-radius:999px;padding:3px;margin-right:6px}
+.navg{flex:0 0 auto;display:inline-flex;background:var(--mint);border-radius:999px;padding:3px;margin-right:6px;position:sticky;left:0;z-index:2;box-shadow:-16px 0 0 var(--paper),6px 0 10px -2px var(--paper)}
 .navg button{font:inherit;font-size:13px;font-weight:700;border:0;background:transparent;color:var(--teal);border-radius:999px;width:30px;height:28px;cursor:pointer}
 .navg button.on{background:var(--teal);color:#fff}
 
@@ -604,11 +604,17 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 16px 50p
   // Active nav highlight
   var links = Array.prototype.slice.call(document.querySelectorAll('#navlinks a'));
   var secs = links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+  var lastIdx=-2;
   function onScroll(){
     var y = window.scrollY + 120, idx = -1;
     secs.forEach(function(s,i){ if(s.offsetTop <= y) idx=i; });
     links.forEach(function(a,i){ a.classList.toggle('active', i===idx); });
-    if(idx>=0){ var a=links[idx], p=a.parentNode; if(a.offsetLeft < p.scrollLeft || a.offsetLeft+a.offsetWidth > p.scrollLeft+p.clientWidth) p.scrollTo({left:a.offsetLeft-16,behavior:'smooth'}); }
+    var p=document.getElementById('navlinks');
+    if(p.scrollWidth > p.clientWidth + 2 && idx!==lastIdx){
+      lastIdx=idx;
+      var left = idx<=0 ? 0 : links[idx].offsetLeft - p.clientWidth/2 + links[idx].offsetWidth/2;
+      p.scrollTo({left:Math.max(0,left),behavior:'smooth'});
+    }
   }
   window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
 })();
